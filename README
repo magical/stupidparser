@@ -1,6 +1,6 @@
 stupidparser - A simple arithmetic expression parser and evaluator.
 
-It uses the Top Down Operator Precendence algorithm for parsing.  For more
+It uses the Top Down Operator Precedence algorithm for parsing.  For more
 information, see parse.py.
 
 What i actually wanted to write is a scheme compiler, but i wrote this first,
