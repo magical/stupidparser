@@ -34,15 +34,13 @@ operators = \
     ,">": operator.gt
     ,"<=": operator.le
     ,">=": operator.ge
-    ,"and": operator.and_
-    ,"or": operator.or_
     ,"not": operator.not_
     }
 
 prefix_operators = \
-    {"+": (lambda x: +x)
-    ,"-": (lambda x: -x)
-    ,"\N{MINUS SIGN}": (lambda x: -x)
+    {"+": operator.pos
+    ,"-": operator.neg
+    ,"\N{MINUS SIGN}": operator.neg
     }
 
 
@@ -57,6 +55,23 @@ def eval(node):
         name = eval(name)
         args = map(eval, args)
         return name(*args)
+    elif node.id == 'and':
+        assert len(node.children) == 2
+        first = eval(node.children[0])
+        if first:
+            return eval(node.children[1])
+        else:
+            return first
+    elif node.id == 'or':
+        assert len(node.children) == 2
+        first = eval(node.children[0])
+        if first:
+            return first
+        else:
+            return eval(node.children[1])
+    elif node.id == 'not':
+        assert len(node.children) == 1
+        return not eval(node.children[0])
     elif node.id in prefix_operators and len(node.children) == 1:
         value = eval(node.children[0])
         return prefix_operators[node.id](value)
@@ -107,7 +122,7 @@ def test():
         , ("true or false", True)
         , ("true and false or 5", 5)
         , ("0 or true and false", 0)
-        #, ("(0 or true) and false", False)
+        , ("(0 or true) and false", False)
         #, ("1 == 2 == 3", True)
         , ("5 < 6", True)
         , ("5 > 6", False)
