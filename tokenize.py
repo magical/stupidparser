@@ -1,15 +1,3 @@
-# An arithmetic parser
-# What i really want to write is a scheme parser, but if i can't get this
-# right, i probably can't get that right.
-
-# Spec:
-# An expression is a number or expression operator expression
-# or function '(' expression ')'.
-# A number is 1 or more digits.
-# A function is a name.
-# A name is a letter followed by 0 or more letters or digits.
-# An operator is one of these: + / * % - or and not
-
 import io
 from collections import namedtuple
 

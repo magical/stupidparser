@@ -1,0 +1,16 @@
+stupidparser - A simple arithmetic expression parser and evaluator.
+
+It uses the Top Down Operator Precendence algorithm for parsing.  For more
+information, see parse.py.
+
+What i actually wanted to write is a scheme compiler, but i wrote this first,
+because if i can't hack this, a scheme compiler is out of the question.
+
+Inaccurate specification:
+ An expression is a number or expression operator expression
+  or function '(' expression ')'.
+ A number is 1 or more digits.
+ A function is a name.
+ A name is a letter followed by 0 or more letters or digits.
+ An operator is one of these: + / * % - or and not
+
