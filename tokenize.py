@@ -28,7 +28,7 @@ def tokenizer(f):
         + - \N{MINUS SIGN}
         * \N{MULTIPLICATION SIGN} / // mod
         **
-        ( ) [ ]
+        ( ) [ ] ,
         and or not
         if else
         """.split()

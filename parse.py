@@ -6,6 +6,8 @@
 # led = left denotation
 # lbp = left binding power
 
+# the higher the binding power, the more tightly the oper binds
+
 import io
 from functools import wraps, partial
 from collections import namedtuple
@@ -146,27 +148,39 @@ class Parser:
         literal = self.literal
         infix = self.infix
         infixr = self.infixr
-        prefix = partial(self.prefix, rbp=70)
+        prefix = self.prefix
 
         symbol("(end)")
         symbol(")")
+        symbol(",")
 
         literal('(literal)')
         literal('(name)')
 
-        infix("+", 10)
-        infix("-", 10)
-        infix("\N{MINUS SIGN}", 10)
+        infix("or", 10)
+        infix("and", 11)
+        prefix("not", 12)
 
-        infix("*", 20)
-        infix("/", 20)
-        infix("//", 20)
+        infix("==", 20)
+        infix("!=", 20)
+        infix("<", 20)
+        infix(">", 20)
+        infix("<=", 20)
+        infix("=>", 20)
 
-        infixr("**", 30)
+        infix("+", 30)
+        infix("-", 30)
+        infix("\N{MINUS SIGN}", 30)
 
-        prefix("+")
-        prefix("-")
-        prefix("\N{MINUS SIGN}")
+        infix("*", 40)
+        infix("/", 40)
+        infix("//", 40)
+
+        infixr("**", 50)
+
+        prefix("+", 70)
+        prefix("-", 70)
+        prefix("\N{MINUS SIGN}", 70)
 
         # parentheses
         @self.registry.nud("(")
@@ -179,10 +193,9 @@ class Parser:
         @self.registry.led("(", 10)
         def led(symbol, left):
             assert left.id != '(literal)'
-            values = [self.expression()]
+            values = []
             while self.token.id != ')':
-                values.append(token)
-                self._next()
+                values.append(self.expression())
                 if self.token.id == ',':
                     self._next(',')
             self._next(")")
@@ -194,6 +207,7 @@ def test():
     print(parser.parse("1 * 7 * 9"))
     print(parser.parse("1 + 2 * 3"))
     print(parser.parse("int(2)"))
+    print(parser.parse("abs(2 - 7)"))
 
 if __name__ == '__main__':
     test()

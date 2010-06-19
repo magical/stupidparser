@@ -2,9 +2,9 @@ import math
 import operator
 
 if __name__ == '__main__' and __package__ is None:
+    __package__ = 'stupidparser'
     import sys, os
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-    __package__ = 'stupidparser'
     __import__('stupidparser')
 
 scope =\
@@ -14,6 +14,9 @@ scope =\
     ,"log": math.log
     ,"int": int
     ,"float": float
+    ,"sum": (lambda *args: sum(args))
+    ,"true": True
+    ,"false": False
     }
 
 operators = \
@@ -25,6 +28,15 @@ operators = \
     ,"/": operator.truediv
     ,"//": operator.floordiv
     ,"**": pow
+    ,"==": operator.eq
+    ,"!=": operator.ne
+    ,"<": operator.lt
+    ,">": operator.gt
+    ,"<=": operator.le
+    ,">=": operator.ge
+    ,"and": operator.and_
+    ,"or": operator.or_
+    ,"not": operator.not_
     }
 
 prefix_operators = \
@@ -43,7 +55,7 @@ def eval(node):
     elif node.id == '(':
         name, args = node.children
         name = eval(name)
-        args = [eval(v) for v in args]
+        args = map(eval, args)
         return name(*args)
     elif node.id in prefix_operators and len(node.children) == 1:
         value = eval(node.children[0])
@@ -59,7 +71,9 @@ def test():
     parser = Parser()
     def test_expr(expr, expected_value):
         ast = parser.parse(expr)
+        #print(ast)
         value = eval(ast)
+        #assert type(value) == type(expected_value)
         assert value == expected_value, \
             "%s == %r; expected %r" % (ast, value, expected_value)
         print (expr, "==", value)
@@ -74,6 +88,32 @@ def test():
         , ("-4", -4)
         , ("\u2212 6", -6)
         , ("(1000 \u2212 7) // 13", 76)
+        , ("sum(5, 5)", 10)
+        , ("sum(1, 2, 3, 4)", 10)
+        , ("5 == 5", True)
+        , ("5 == 6", False)
+        , ("(1 == 1) and (2 == 2)", True)
+        , ("(1 == 2) and (2 == 2)", False)
+        , ("(1 == 1) and (1 == 2)", False)
+        , ("(1 == 2) and (1 == 2)", False)
+        , ("true and true", True)
+        , ("false and true", False)
+        , ("true and false", False)
+        , ("false and false", False)
+        , ("not 1 == 1", False)
+        , ("true", True)
+        , ("1", 1)
+        , ("not true", False)
+        , ("true or false", True)
+        , ("true and false or 5", 5)
+        , ("0 or true and false", 0)
+        #, ("(0 or true) and false", False)
+        #, ("1 == 2 == 3", True)
+        , ("5 < 6", True)
+        , ("5 > 6", False)
+        , ("5 < 5", False)
+        , ("5 <= 5", True)
+        , ("-1 < 4", True)
         ]
 
     for expr, expected_value in tests:
